@@ -1,8 +1,12 @@
 #+LANGUAGE: es
 #+OPTIONS: toc:nil title:nil
+#+BIBLIOGRAPHY: fuentes.bib
+#+CITE_EXPORT: biblatex
+#+LATEX_HEADER: \bibliographystyle{plain}
+
 #+LATEX_CLASS_OPTIONS: [titlepage,a4paper]
+#+LATEX_HEADER: \hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,bookmarksopen=true}
 #+LATEX_HEADER: \usepackage{a4wide}
-#+LATEX_HEADER: \usepackage[colorlinks=true,linkcolor=black,urlcolor=blue,bookmarksopen=true]{hyperref}
 #+LATEX_HEADER: \usepackage{bookmark}
 #+LATEX_HEADER: \usepackage{fancyhdr}
 #+LATEX_HEADER: \usepackage[spanish]{babel}
@@ -24,8 +28,8 @@
 #+LATEX_HEADER: \usepackage{color}
 #+LATEX_HEADER: \usepackage[utf8]{inputenc}
 #+LATEX_HEADER: \usepackage{fancyvrb}
-#+LATEX_HEADER: \usepackage[usenames,dvipsnames]{xcolor}
 #+LATEX_HEADER: \fvset{framesep=1mm,fontfamily=courier,fontsize=\scriptsize,numbers=left,framerule=.3mm,numbersep=1mm,commandchars=\\\{\}}
+#+LATEX_HEADER: \usepackage[nottoc]{tocbibind}
 
 #+NAME: setup
 #+BEGIN_SRC emacs-lisp :results silent :exports none
@@ -127,6 +131,9 @@ MADRID,NEW YORK,2,5
 
 El programa debe retornar en pantalla la cantidad máxima de personas que pueden
 viajar y el costo mínimo que se puede gastar.
+** Intro
+
+Una cita de stackoverflow[cite:@unacita]
 
 * Parte 2: Un reality único
 
@@ -153,3 +160,6 @@ Se pide:
  4. Un tercer problema al que llamaremos X se puede reducir polinomialmente a EXACT-COVER, qué podemos decir acerca de su complejidad?
 
  5. Realice un análisis entre las clases de complejidad P, NP y NP-C y la relación entre ellos.
+
+* Fuentes
+\printbibliography[heading=none]

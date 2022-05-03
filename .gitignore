@@ -2,3 +2,4 @@ __pycache__/
 _minted-informe/
 svg-inkscape/
 *.tex
+*.bbl
