@@ -163,7 +163,6 @@ def camino_fuente_sumidero(grafo, grafo_residual):
 
         predecesor = predecesores[actual]
         capacidad = grafo.atributos(predecesor, actual)['capacidad'] - grafo_residual.atributos(predecesor, actual)['flujo']
-        print(capacidad)
         if capacidad <= 0:
             return None
         camino.insert(0, (predecesor, actual, capacidad))
@@ -186,7 +185,7 @@ def Ford_Fulkerson(grafo):
             grafo_residual._grafo[u][v]['flujo'] += capacidad_maxima
             grafo_residual._grafo[v][u]['flujo'] -= capacidad_maxima
 
-    print(grafo_residual)
+    return grafo_residual
 
 def Cycle_Cancelling(grafo):
     pass

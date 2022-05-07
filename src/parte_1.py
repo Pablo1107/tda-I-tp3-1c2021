@@ -23,10 +23,10 @@ def leer_grafo(nombre_fichero):
 
 def main(nombre_fichero):
     grafo = leer_grafo(nombre_fichero)
-    print(grafo)
+    # print(grafo)
     # grafo.DFS(grafo.fuente)
 
-    Ford_Fulkerson(grafo)
+    return grafo, Ford_Fulkerson(grafo)
     
     
     # res = Bellman_Ford(grafo, grafo.fuente)

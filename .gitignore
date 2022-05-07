@@ -3,3 +3,4 @@ _minted-informe/
 svg-inkscape/
 *.tex
 *.bbl
+*.gv*
