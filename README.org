@@ -2,6 +2,42 @@
 
 Extraído del [[https://algoritmos-rw.github.io/tda/2022-1c/tp3/][Enunciado]]
 
+* Detalles de implementación
+
+El algoritmo fue implementado en Python y probado con la versión ~3.10.4~.
+
+Para la ejecución del algoritmo normal no hay dependencia, para exportar el
+grafo a imagen, se necesita como dependencia ~graphviz~ que se puede instalar con:
+
+#+begin_src bash
+pip install graphviz
+#+end_src
+
+** Ejecución del programa
+
+El programa contiene un ~shebang~ para ser ejecutado en una terminal de la
+siguiente forma:
+
+#+begin_src bash :results raw
+./src/parte_1.py <filename>
+#+end_src
+
+El comprimido entregado incluye un archivo ejemplo en ~assets/grafo-ejemplo.csv~
+con grafos ejemplos, por ejemplo:
+
+#+begin_src bash :results raw
+./src/parte_2.py ./assets/grafo-ejemplo.csv
+#+end_src
+
+*** Exportador de Grafo a Imagen
+
+Aparte de esto, esta incluido un exportador que genera un imagen en formato
+/SVG/ de los grafos y se puede generar con el siguiente comando:
+
+#+begin_src bash
+./src/export.py ./assets/grafo-ejemplo.csv
+#+end_src
+
 * Lineamientos básicos :noxport:
 
  - El trabajo se realizará en grupos de cinco personas.
