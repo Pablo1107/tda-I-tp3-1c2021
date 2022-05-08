@@ -1,34 +1,6 @@
 from collections import defaultdict
 import json
 
-# class Grafo():
-#     def __init__(self, fuente, raiz):
-#         self.fuente = fuente
-#         self.sumidero = sumidero
-#         self.aristas = list()
-#         self.vertices = set()
-#         self.agregar_vertice(raiz)
-#
-#     def agregar_vertice(self, vertice):
-#         self.vertices.add(vertice)
-#
-#     def agregar_arista(self, origen, destino, peso = 1):
-#         self.aristas.append((origen, destino, peso))
-#         self.agregar_vertice(origen)
-#         self.agregar_vertice(destino)
-#
-#     def actualizar_arista(self, origen, destino, peso):
-#         for i, arista in enumerate(self.aristas):
-#             if arista[0] == origen and arista[1] == destino:
-#                 self.vertices[i] = peso
-#                 return
-#
-#     def peso(self, origen, destino):                     # O(E)
-#         for arista in self.aristas:
-#             if arista[0] == origen and arista[1] == destino:
-#                 return arista[2]
-#         return None
-
 class GrafoIter:
     def __init__(self, grafo):
         self.grafo = grafo
