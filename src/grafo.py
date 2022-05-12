@@ -1,5 +1,7 @@
-from collections import defaultdict
+from collections import defaultdict,deque
 import json
+
+
 
 class GrafoIter:
     def __init__(self, grafo):
@@ -35,6 +37,28 @@ class Grafo:
 
     def atributos(self, origen, destino):
         return self._grafo[origen][destino]
+
+    def BFS(self, origen, destino = None):
+        if origen not in self.vertices:
+            return None
+        if destino != None and destino not in self.vertices:
+            return None
+        visitados = set()
+        padres = {}
+        padres[origen] = None
+        visitados.add(origen)
+        q = deque()
+        q.append(origen)
+        while not len(q) == 0:
+            v = q.pop()
+            for w in self._grafo[v]:
+                if w not in visitados:
+                    padres[w] = v
+                    visitados.add(w)
+                    q.appendleft(w)
+                    if w == destino:
+                        return padres
+        return padres
 
     def DFS(self, vertice, f=None, ctx=None):
         if vertice not in self._grafo:
