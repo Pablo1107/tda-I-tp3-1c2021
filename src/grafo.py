@@ -139,7 +139,7 @@ def Bellman_Ford(grafo, origen):                                      # O(V * E)
 
     return dist, predecesores
 
-def camino_fuente_sumidero(grafo, grafo_residual):
+def camino_fuente_sumidero(grafo_residual):
     """
     Devuelve una lista de aristas que representan el camino de fuente a sumidero
 
@@ -148,40 +148,42 @@ def camino_fuente_sumidero(grafo, grafo_residual):
     """
     camino = []
 
-    # Buscar el camino de fuente a sumidero con DFS
-    dist, predecesores = Bellman_Ford(grafo, grafo.fuente)
+    # Buscar el camino de fuente a sumidero con BFS
+    predecesores = grafo_residual.BFS(grafo_residual.fuente, grafo_residual.sumidero)
 
     # Reconstruir camino del sumidero a la fuente
-    actual = grafo.sumidero
-    while actual != grafo.fuente:
+    actual = grafo_residual.sumidero
+    while actual != grafo_residual.fuente:
         if actual not in predecesores:
             return None
-
         predecesor = predecesores[actual]
-        capacidad = grafo.atributos(predecesor, actual)['capacidad'] - grafo_residual.atributos(predecesor, actual)['flujo']
-        if capacidad <= 0:
-            return None
-        camino.insert(0, (predecesor, actual, capacidad))
+
+        camino.append((predecesor, actual, grafo_residual._grafo[predecesor][actual]['capacidad']))
         actual = predecesor
-    
+    camino.reverse()
     return camino
 
 def Ford_Fulkerson(grafo):
     flujo_maximo = 0
     grafo_residual = Grafo(grafo.fuente, grafo.sumidero)
 
-    # Inicializar aristas residuales
     for u, v, _ in grafo:
-        grafo_residual.agregar_arista(u, v, {'flujo': 0})
-        grafo_residual.agregar_arista(v, u, {'flujo': 0})
+        grafo_residual.agregar_arista(u, v, {'capacidad': grafo.atributos(u,v)['capacidad']})
 
-    while camino := camino_fuente_sumidero(grafo, grafo_residual):
+    while camino := camino_fuente_sumidero(grafo_residual):
         capacidad_maxima = min(capacidad for u, v, capacidad in camino)
+        flujo_maximo += capacidad_maxima
         for u, v, _ in camino:
-            grafo_residual._grafo[u][v]['flujo'] += capacidad_maxima
-            grafo_residual._grafo[v][u]['flujo'] -= capacidad_maxima
+            if u not in grafo_residual.adyacentes(v):
+                grafo_residual.agregar_arista(v, u, {'capacidad': 0})
+            grafo_residual._grafo[v][u]['capacidad'] += capacidad_maxima
 
-    return grafo_residual
+            grafo_residual._grafo[u][v]['capacidad'] -= capacidad_maxima
+            if grafo_residual._grafo[u][v]['capacidad'] == 0:
+                del(grafo_residual._grafo[u][v])
+
+    return (grafo_residual)
+
 
 def Cycle_Cancelling(grafo):
     pass

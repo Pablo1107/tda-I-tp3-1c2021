@@ -26,7 +26,7 @@ def main(nombre_fichero):
     # print(grafo)
     # grafo.DFS(grafo.fuente)
 
-    print(grafo.BFS(grafo.fuente))
+    print(Ford_Fulkerson(grafo))
     
     
     # res = Bellman_Ford(grafo, grafo.fuente)
