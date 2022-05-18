@@ -230,7 +230,8 @@ Esto implica que el flujo nuevo es siempre mayor al anterior por al menos una un
 otro lado, para buscar una cota máxima de flujo, suponemos que todas las aristas salientes
 de la fuente van a estar saturadas. Con esta suposición, el flujo máximo es la sumatoria
 de la capacidad de este subconjunto de aristas. Llamando a este número C, sabemos que c
-es la una cota superior del flujo máximo[cite:@Tardos]. 
+es la una cota superior del flujo máximo[cite:@Tardos].
+
 Esto implica que como mucho, el C iteraciones. En cada iteración, se visita cada arista
 del camino de aumento. Por lo tanto, la complejidad final de ese ciclo es $O(C.E)$
 
