@@ -169,11 +169,12 @@ dirigido que indica como podemos cambiar el flujo de la red $G$. Para crear el g
 residual, primero obtenemos las capacidades residuales siguiendo[cite:@CLRS]:
 
 $$
-c_f(u,v) = {\begin{array}{lcc}
-            c(u,v) - f(u,v) si in E \\
-            f(v,u) si(v,u) in E \\
-            0 si no \\
-            \end{array}\right\}
+c_f(u,v)= \left\{ \begin{array}{lcc}
+             c(u,v) - f(u,v) & \text{si} (u,v) \in E \\
+             f(v,u)          & \text{si} (v,u) \in E \\
+             0               & \text{si no}
+             \end{array}
+   \right.
 $$
 
 Es decir que la capacidad residual de una arista $(u,v)$ va a ser su capacidad menos el 
@@ -244,19 +245,18 @@ calculado. Para ello, es importante entender como funciona el costo y como este 
 ser representado en el grafo residual.
 Sea f el flujo sobre una red, E el conjunto de las aristas y c(x) una función costo, 
 tenemos que el costo del flujo es:
+
 $$
-\begin{equation}                      
-c(f) = \[ \sum_{n=1}^{\infty} 2^{-n} = 1 \]
-\end{equation}  
+c(f)=\sum_{e\in E} f(e)\ c(e)
 $$
+
 El hecho de que tengamos un costo en las aristas va a impactar en el grafo residual de 
 la forma que el par del grafo residual de una arista en la red de flujo va a tener el 
 mismo costo pero negativo[cite:@Kelin] . Es decir, notando a una arista e como los vértices u,v que 
 conecta, en orden de la dirección, esto lo representamos como:
+
 $$
-\begin{equation}                      
 c(u,v)=-c(v,u)
-\end{equation}  
 $$
 
 Luego, un teorema [cite:@Busacker] para redes de grafos indica que un flujo f es el de 
@@ -269,20 +269,16 @@ ciclo de forma que las aristas que no pertenezcan al ciclo se vean inafectadas y
 que si pertenezcan al ciclo se modifiquen así:
 
 $$
-\begin{equation}   
-f_nuevo(u,v) = {\begin{array}{lcc}
-            f(u,v) + C_m cuando (u,v) \in \gamma \\
-            f(v,u) - C_m cuando (u,v) \in \gamma \\
-            \end{array}\right\}
-\end{equation}
+f_{nuevo}(u,v)= \left\{ \begin{array}{lcc}
+            f(u,v) + C_m & \text{cuando} (u,v) \in \gamma \\
+            f(v,u) - C_m & \text{cuando} (u,v) \in \gamma \\
+             \end{array}\right.
 $$
 
 Entonces, el costo del nuevo flujo se obtiene de:
 
 $$
-\begin{equation}                      
-c(f_nuevo)\=\c(f) + c_m.c(\gamma)
-\end{equation}
+c(f_{nuevo}) = c(f) + c_m\ c(\gamma)
 $$
 
 De acá, es evidente que mientras $c(\gamma)$ sea negativo, es decir que existan ciclos 
@@ -294,11 +290,10 @@ negativos de costo. Para encontrar los ciclos negativos podemos utilizar Bellman
 Teniendo esto en consideración, el algoritmo para calcular el flujo máximo de costo 
 mínimo, que fue originalmente propuesto por Morton Klein en 1967, propone 5 pasos para 
 resolver el problema [cite:@Klein]:
- 1. Obtener el flujo máximo de la red sin considerar el costo. 
- 2. Actualizar el grafo residual $G_f$ con el costo por unidad de flujo negativo, como se 
-mencionó previamente. 
- 3. Probar si hay ciclos negativos dirigidos en el grafo $G_f$. En caso de no haber, se 
-terminó el problema.
+
+ 1. Obtener el flujo máximo de la red sin considerar el costo.
+ 2. Actualizar el grafo residual $G_f$ con el costo por unidad de flujo negativo, como se mencionó previamente.
+ 3. Probar si hay ciclos negativos dirigidos en el grafo $G_f$. En caso de no haber, se terminó el problema.
  4. Se redistribuye el flujo de manera que se satura una de las aristas del ciclo negativo.
  5. Repetir desde el punto 2.
 
@@ -337,19 +332,20 @@ Cycle-canceling():
 #+end_src
 
 *** Análisis temporal y espacial
-Primero aplicamos Ford-Fulkerson para obtener el flujo máximo cuya complejidad temporal 
-es $O(C.E)$,  donde $C$ es la capacidad del flujo y $E$ la cantidad de aristas que 
-tiene la red. Luego, se aplica el algoritmo de Bellman-Ford, cuya complejidad es $(V.E)$ 
-hasta que no haya mas ciclos negativos. Siendo que, como mencionamos antes, cada iteración
-reduce como mínimo en 1 el costo, se va a llamar a Bellman-Ford un máximo de $C_i(f)-C_f (f)$ 
-veces. Ahora, el costo inicial depende del algoritmo por lo tanto es mejor establecer 
-una cota superior al costo inicial. Llevándolo a un extremo,  sea $C_max$  la capacidad 
-más alta de una arista, a $K_max$ como el costo más alto de una arista, entonces, el 
-costo inicial tiene una cota superior tal que $C_i (f) ≤ K_max.C_max.E$. Pensando que 
-$C_f$ tiene que ser positivo, podríamos maximizar a la resta como 
-$C_i(f)- C_f (f) ≤K_max.C_max.E$. Por lo tanto, el algoritmo de Bellman-Ford va a ser 
-llamado un máximo de $K_max.C_max.E$ veces. Entonces, la complejidad temporal del 
-algoritmo resulta $O(V.E^2 K_max.C_max)$.
+Primero aplicamos Ford-Fulkerson para obtener el flujo máximo cuya complejidad
+temporal es $O(C\ E)$,  donde $C$ es la capacidad del flujo y $E$ la cantidad de
+aristas que tiene la red. Luego, se aplica el algoritmo de Bellman-Ford, cuya
+complejidad es $O(V\ E)$ hasta que no haya mas ciclos negativos. Siendo que,
+como mencionamos antes, cada iteración reduce como mínimo en 1 el costo, se va a
+llamar a Bellman-Ford un máximo de $C_i(f) - C_f(f)$ veces. Ahora, el costo
+inicial depende del algoritmo por lo tanto es mejor establecer una cota superior
+al costo inicial. Llevándolo a un extremo,  sea $C_{max}$  la capacidad más alta
+de una arista, a $K_{max}$ como el costo más alto de una arista, entonces, el
+costo inicial tiene una cota superior tal que $C_i (f) \leq K_{max}\ C_{max}\ E$.
+Pensando que $C_f$ tiene que ser positivo, podríamos maximizar a la resta como
+$C_i(f) - C_f (f) \leq K_{max}\ C_{max}\ E$. Por lo tanto, el algoritmo de
+Bellman-Ford va a ser llamado un máximo de $K_{max}\ C_{max}\ E$ veces. Entonces,
+la complejidad temporal del algoritmo resulta $O(V\ E^2\ K_{max}\ C_{max})$.
 
 ** Detalles de implementación
 
