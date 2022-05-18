@@ -1,5 +1,7 @@
 #+LANGUAGE: es
 #+OPTIONS: toc:nil title:nil
+#+BIBLIOGRAPHY: fuentes.bib
+#+CITE_EXPORT: biblatex
 #+LATEX_HEADER: \bibliographystyle{plain}
 
 #+LATEX_CLASS_OPTIONS: [titlepage,a4paper]
