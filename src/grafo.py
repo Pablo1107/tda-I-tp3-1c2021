@@ -63,23 +63,6 @@ class Grafo:
                         return padres
         return padres
 
-    def DFS(self, vertice, f=None, ctx=None):
-        if vertice not in self._grafo:
-            return
-
-        if not f:
-            f = lambda x, _: print(x)
-
-        visitados = set()
-        pila = [vertice]
-        while pila:
-            vertice = pila.pop()
-            f(vertice, ctx)
-            if vertice not in visitados:
-                visitados.add(vertice)
-                for v in self.adyacentes(vertice):
-                    pila.append(v)
-
     def __iter__(self):
         return GrafoIter(self)
 
