@@ -1,8 +1,6 @@
 from collections import defaultdict,deque
 import json
 
-
-
 class GrafoIter:
     def __init__(self, grafo):
         self.grafo = grafo
@@ -36,6 +34,11 @@ class Grafo:
         return self._grafo[vertice].keys()
 
     def atributos(self, origen, destino):
+        if (
+            origen not in self._grafo.keys() or
+            destino not in self._grafo[origen].keys()
+        ): return None
+
         return self._grafo[origen][destino]
 
     def BFS(self, origen, destino = None):
@@ -191,7 +194,6 @@ def Ford_Fulkerson(grafo):
     return grafo_residual, flujo_maximo
 
 def Cycle_Cancelling(grafo, grafo_residual):
-    
     for (u, v, _) in grafo_residual:
         if v not in grafo._grafo[u]:
             grafo_residual._grafo[u][v]['costo'] = -grafo.atributos(v,u)['costo']
@@ -214,13 +216,11 @@ def Cycle_Cancelling(grafo, grafo_residual):
                 del(grafo_residual._grafo[u][v])
 
     costo_total = 0
-    padres = grafo_residual.BFS(grafo_residual.sumidero)
-    for a in padres:
-        if padres[a] == None:
-            continue
-        costo = grafo_residual._grafo[padres[a]][a]['costo']
-        flujo = grafo_residual._grafo[padres[a]][a]['capacidad']
-        if costo < 0:
-            costo_total += -costo* flujo
+    for u, v, _ in grafo:
+        atributos = grafo_residual.atributos(v, u)
+        if (atributos):
+            flujo = atributos.get('capacidad', 0)
+            costo = atributos.get('costo', 0)
+            costo_total -= costo * flujo
 
     return grafo_residual, costo_total

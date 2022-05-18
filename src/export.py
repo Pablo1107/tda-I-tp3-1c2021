@@ -15,11 +15,11 @@ def main(nombre_archivo):
         costo = atributos['costo']
         capacidad = atributos['capacidad']
 
-        dot.edge(u, v, label=str(costo))
+        dot.edge(u, v, label=f'capacidad: {capacidad}, costo: {costo}')
 
     for u, v, atributos in grafo_residual:
-        flujo = atributos['flujo']
-        dot.edge(u, v, label=str(flujo), color='red')
+        capacidad = atributos['capacidad']
+        dot.edge(u, v, label=str(capacidad), color='red')
 
     dot.view()
 

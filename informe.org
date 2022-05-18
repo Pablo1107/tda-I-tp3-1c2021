@@ -135,6 +135,53 @@ viajar y el costo mínimo que se puede gastar.
 
 Una cita de stackoverflow[cite:@unacita]
 
+** Detalles de implementación
+
+El algoritmo fue implementado en Python y probado con la versión ~3.10.4~.
+
+Para la ejecución del algoritmo normal no hay dependencia, para exportar el
+grafo a imagen, se necesita como dependencia ~graphviz~ que se puede instalar con:
+
+#+begin_src bash
+pip install graphviz
+#+end_src
+
+*** Ejecución del programa
+
+El programa contiene un ~shebang~ para ser ejecutado en una terminal de la
+siguiente forma:
+
+#+begin_src bash :results raw
+./src/parte_1.py <filename>
+#+end_src
+
+El comprimido entregado incluye un carpeta en ~assets/~ con grafos ejemplos, por
+ejemplo:
+
+#+begin_src bash :results raw
+./src/parte_1.py ./assets/grafo-qatar.csv
+#+end_src
+
+#+begin_src text
+La cantidad maxima de personas que pueden viajar es:  6
+El costo de todos los viajes es:  14
+#+end_src
+
+**** Exportador de Grafo a Imagen
+
+Aparte de esto, esta incluido un exportador que genera un imagen en formato
+/SVG/ de los grafos y se puede generar con el siguiente comando:
+
+#+begin_src bash
+./src/export.py ./assets/grafo-qatar.csv
+#+end_src
+
+#+ATTR_HTML: :width 800
+#+ATTR_LATEX: :placement [H]
+#+ATTR_LATEX: :width 0.8\textwidth
+#+ATTR_LATEX: :caption \caption{\label{fig1:seq01}Hospital con un entrenador cargado.}
+[[file:assets/grafo-qatar.svg]]
+
 * Parte 2: Un reality único
 
 ** Enunciado :noexport:

@@ -27,17 +27,10 @@ def main(nombre_fichero):
     # grafo.DFS(grafo.fuente)
     grafo_residual, flujo = Ford_Fulkerson(grafo)
     grafo_final, costo = Cycle_Cancelling(grafo, grafo_residual)
-    print('La cantdad maxima de personas que pueden viajar es: ' , flujo)
+    print('La cantidad maxima de personas que pueden viajar es: ', flujo)
     print('El costo de todos los viajes es: ', costo)
     
-    
-    # res = Bellman_Ford(grafo, grafo.fuente)
-    # if res:
-    #     ciclos, costo = res
-    #     ciclos = ','.join(ciclos)
-    #     print(f'Existen al menos un ciclo negativo en el grafo. {ciclos} → costo: {costo}')
-    # else: 
-    #     print('No existen ciclos negativos en el grafo')
+    return grafo, grafo_final
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:

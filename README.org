@@ -22,11 +22,16 @@ siguiente forma:
 ./src/parte_1.py <filename>
 #+end_src
 
-El comprimido entregado incluye un archivo ejemplo en ~assets/grafo-ejemplo.csv~
-con grafos ejemplos, por ejemplo:
+El comprimido entregado incluye un carpeta en ~assets/~ con grafos ejemplos, por
+ejemplo:
 
 #+begin_src bash :results raw
-./src/parte_2.py ./assets/grafo-ejemplo.csv
+./src/parte_1.py ./assets/grafo-qatar.csv
+#+end_src
+
+#+begin_src text
+La cantidad maxima de personas que pueden viajar es:  6
+El costo de todos los viajes es:  14
 #+end_src
 
 *** Exportador de Grafo a Imagen
@@ -35,8 +40,14 @@ Aparte de esto, esta incluido un exportador que genera un imagen en formato
 /SVG/ de los grafos y se puede generar con el siguiente comando:
 
 #+begin_src bash
-./src/export.py ./assets/grafo-ejemplo.csv
+./src/export.py ./assets/grafo-qatar.csv
 #+end_src
+
+#+ATTR_HTML: :width 800
+#+ATTR_LATEX: :placement [H]
+#+ATTR_LATEX: :width 0.8\textwidth
+#+ATTR_LATEX: :caption \caption{\label{fig1:seq01}Hospital con un entrenador cargado.}
+[[file:assets/grafo-qatar.svg]]
 
 * Lineamientos básicos :noxport:
 
