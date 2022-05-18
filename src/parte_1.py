@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import sys
-from grafo import Grafo, Bellman_Ford, Ford_Fulkerson
+from grafo import Grafo, Bellman_Ford, Ford_Fulkerson, Cycle_Cancelling
 
 def leer_grafo(nombre_fichero):
     """
@@ -25,8 +25,10 @@ def main(nombre_fichero):
     grafo = leer_grafo(nombre_fichero)
     # print(grafo)
     # grafo.DFS(grafo.fuente)
-
-    print(Ford_Fulkerson(grafo))
+    grafo_residual, flujo = Ford_Fulkerson(grafo)
+    grafo_final, costo = Cycle_Cancelling(grafo, grafo_residual)
+    print('La cantdad maxima de personas que pueden viajar es: ' , flujo)
+    print('El costo de todos los viajes es: ', costo)
     
     
     # res = Bellman_Ford(grafo, grafo.fuente)

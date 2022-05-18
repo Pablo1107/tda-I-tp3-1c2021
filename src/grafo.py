@@ -91,7 +91,7 @@ class Grafo:
         )
 
     
-def Bellman_Ford(grafo, origen):                                      # O(V * E)
+def Bellman_Ford(grafo):                                      # O(V * E)
     dist = {}
     predecesores = {}
 
@@ -100,8 +100,8 @@ def Bellman_Ford(grafo, origen):                                      # O(V * E)
         dist[v] = float("inf") 
 
     # Inicializar distancias al origen en cero y 
-    dist[origen] = 0
-    predecesores[origen] = None
+    dist[grafo.sumidero] = 0
+    predecesores[grafo.sumidero] = None
 
     # Ejecutar por cada vertice
     for _ in grafo.vertices:
@@ -114,32 +114,38 @@ def Bellman_Ford(grafo, origen):                                      # O(V * E)
                 dist[w] = dist[v] + peso
 
         if not cambio:
-            return dist, predecesores
+            return
 
     # Chequear si hay ciclos negativos
     # y calcular dicho ciclo y su peso
     ciclo = []
     peso_ciclo = 0
+    visitados = set()
     for v, w, atributos in grafo:
         peso = atributos['costo']
         if dist[v] + peso < dist[w]:
-            ciclo.append(v)
-            arista_actual = v
+            visitados.add(v)            
             predecesor = predecesores[v]
-            peso_ciclo = grafo.peso(predecesor, arista_actual)
 
-            while predecesor != v:
-                ciclo.append(predecesor)
-                arista_actual = predecesor
+            while predecesor not in visitados:
+                visitados.add(predecesor)
                 predecesor = predecesores[predecesor]
-                peso_actual = grafo.peso(predecesor, arista_actual)
+
+            primer = predecesor 
+            actual = primer
+            predecesor = predecesores[predecesor]
+            ciclo.append((predecesor, actual, grafo.atributos(predecesor, actual)['capacidad']))
+
+            while predecesor != primer:        
+                actual = predecesor
+                predecesor = predecesores[predecesor]
+                peso_actual = grafo.atributos(predecesor, actual)['capacidad']
                 peso_ciclo += peso_actual
+                ciclo.append((predecesor, actual, grafo.atributos(predecesor, actual)['capacidad']))
+            return ciclo[::-1]
+    return
 
-            return ciclo[::-1], peso_ciclo
-
-    return dist, predecesores
-
-def camino_fuente_sumidero(grafo_residual):
+def camino_fuente_sumidero(grafo):
     """
     Devuelve una lista de aristas que representan el camino de fuente a sumidero
 
@@ -149,16 +155,16 @@ def camino_fuente_sumidero(grafo_residual):
     camino = []
 
     # Buscar el camino de fuente a sumidero con BFS
-    predecesores = grafo_residual.BFS(grafo_residual.fuente, grafo_residual.sumidero)
+    predecesores = grafo.BFS(grafo.fuente, grafo.sumidero)
 
     # Reconstruir camino del sumidero a la fuente
-    actual = grafo_residual.sumidero
-    while actual != grafo_residual.fuente:
+    actual = grafo.sumidero
+    while actual != grafo.fuente:
         if actual not in predecesores:
             return None
         predecesor = predecesores[actual]
 
-        camino.append((predecesor, actual, grafo_residual._grafo[predecesor][actual]['capacidad']))
+        camino.append((predecesor, actual, grafo._grafo[predecesor][actual]['capacidad']))
         actual = predecesor
     camino.reverse()
     return camino
@@ -182,8 +188,39 @@ def Ford_Fulkerson(grafo):
             if grafo_residual._grafo[u][v]['capacidad'] == 0:
                 del(grafo_residual._grafo[u][v])
 
-    return (grafo_residual)
+    return grafo_residual, flujo_maximo
 
+def Cycle_Cancelling(grafo, grafo_residual):
+    
+    for (u, v, _) in grafo_residual:
+        if v not in grafo._grafo[u]:
+            grafo_residual._grafo[u][v]['costo'] = -grafo.atributos(v,u)['costo']
+        else:
+            grafo_residual._grafo[u][v]['costo'] = grafo.atributos(u,v)['costo']
 
-def Cycle_Cancelling(grafo):
-    pass
+    while ciclo := Bellman_Ford(grafo_residual):
+        bottleneck = min(capacidad for u, v, capacidad in ciclo)
+        for u, v, _ in ciclo:
+            if u not in grafo_residual.adyacentes(v):
+                grafo_residual.agregar_arista(v, u, {'capacidad': 0, 'costo': 0})
+                if u not in grafo._grafo[v]:
+                    grafo_residual._grafo[v][u]['costo'] = -grafo.atributos(u,v)['costo']
+                else:
+                    grafo_residual._grafo[v][u]['costo'] = grafo.atributos(v,u)['costo']
+            grafo_residual._grafo[v][u]['capacidad'] += bottleneck
+
+            grafo_residual._grafo[u][v]['capacidad'] -= bottleneck
+            if grafo_residual._grafo[u][v]['capacidad'] == 0:
+                del(grafo_residual._grafo[u][v])
+
+    costo_total = 0
+    padres = grafo_residual.BFS(grafo_residual.sumidero)
+    for a in padres:
+        if padres[a] == None:
+            continue
+        costo = grafo_residual._grafo[padres[a]][a]['costo']
+        flujo = grafo_residual._grafo[padres[a]][a]['capacidad']
+        if costo < 0:
+            costo_total += -costo* flujo
+
+    return grafo_residual, costo_total
