@@ -161,7 +161,7 @@ Lo que se propone en este algoritmo se divide en dos grandes partes, encontrar e
 maximo y luego minimizar el costo.
 
 *** Ford-Fulkerson
-Primero hay que encontrar el flujo máximo. Esto podemos hacerlo mediante Ford-Fulkerson. 
+Primero hay que encontrar el flujo máximo. Esto podemos hacerlo mediante el metodo de Ford-Fulkerson. 
 Para explicar este método debemos primero explicar los conceptos de camino de aumento 
 y grafo residual.
 Dado una red de flujo $G = (V,E)$ y un flujo $f$, el grafo residual $G_f$ es un grafo 
@@ -187,7 +187,8 @@ mediante el grafo residual.[cite:@CLRS]
 
 Entonces, sabiendo estas dos cosas podemos plantear el algoritmo. Primero, inicializamos 
 el flujo total en 0, es decir ponemos en 0 el flujo por cada arista. Luego, mientras 
-haya un camino de aumento, esto puede hallarse por DFS o BFS por ejemplo, sabemos que 
+haya un camino de aumento, esto puede hallarse por DFS o BFS (luego vamos a ver que es 
+conveniente utilizar BFS) por ejemplo, sabemos que 
 el cuello de botella va a ser la mínima capacidad en este camino, pues no va a poder 
 pasar más flujo que el cuello de botella. Luego, aumentamos el flujo en este camino en 
 el grafo residual, saturando la arista del camino cuya capacidad era la mínima. Esto se
@@ -229,7 +230,17 @@ es la una cota superior del flujo máximo[cite:@Tardos].
 Esto implica que como mucho, el C iteraciones. En cada iteración, se visita cada arista
 del camino de aumento. Por lo tanto, la complejidad final de ese ciclo es $O(C.E)$
 
-Entonces, la complejidad final de Ford-Fulkerson resulta $O(C.E)$.
+Entonces, la complejidad final de Ford-Fulkerson resulta $O(C.E)$. Es decir, seria
+pseudo-polinomial
+
+Sin embargo, esto es porque no sabemos como se elige el camino de aumento. Si nosotros
+elegimos el camino de aumento como el mas corto entre la fuente y el sumidero, es decir 
+utilizamos BFS, la complejidad resulta polinomial. Esto es porque si elegimos el camino
+mas corto se va a saturar como minimo una arista. Entonces, el proximo camino minimo
+va a ser de igual longitud o mas largo, con una longitud maxima posible de $V$. De esta
+forma, en lugar de hacer $C$ iteraciones vamos a terminar haciendo $V E$ interaciones.
+
+A este algoritmo se lo conoce como Edmonds-Kalp y tiene una complejidad de $O(V E^2)$
 
 **** Optimalidad
 Como se mencionó en la explicación del método, si hay un camino de aumento, podemos
@@ -298,7 +309,7 @@ resolver el problema [cite:@Klein]:
  5. Repetir desde el punto 2.
 
 Entonces, la idea es primero obtener el flujo máximo da la red dada, lo hacemos por 
-Ford-Fulkerson. Luego, por lo presentado anteriormente, mientras existan ciclos de costo
+Edmonds-Karp. Luego, por lo presentado anteriormente, mientras existan ciclos de costo
 negativo sabemos que se puede reducir el costo saturando una de las aristas del ciclo 
 negativo. Como sucede en Ford-Fulkerson, cada vez que aumentamos el flujo reducimos el 
 costo total del flujo por al menos 1. Esto último se cumple porque los costos de cada 
@@ -312,7 +323,7 @@ Entonces, el algoritmo eventualmente va a finalizar en $C_f(f) - C_i(f)$ iteraci
 Cycle-canceling():
     Sea f el flujo maximo
     Sea G(f) el grafo residual
-    Obtener f y G(f) mediante Ford-Fulkerson
+    Obtener f y G(f) mediante Edmonds-Karp
     costo_min = 0
     Mientras G(f) tenga un ciclo negativo C:
         Obtener el C mediante Bellman-Ford
@@ -332,19 +343,21 @@ Cycle-canceling():
 #+end_src
 
 *** Análisis temporal y espacial
-Primero aplicamos Ford-Fulkerson para obtener el flujo máximo cuya complejidad
-temporal es $O(C\ E)$,  donde $C$ es la capacidad del flujo y $E$ la cantidad de
+Primero aplicamos Edmonds-Karp para obtener el flujo máximo cuya complejidad
+temporal es $O(V\ E^2)$,  donde $V$ es la cantidad de vertices y $E$ la cantidad de
 aristas que tiene la red. Luego, se aplica el algoritmo de Bellman-Ford, cuya
-complejidad es $O(V\ E)$ hasta que no haya mas ciclos negativos. Siendo que,
-como mencionamos antes, cada iteración reduce como mínimo en 1 el costo, se va a
+complejidad es $O(V\ E)$ hasta que no haya mas ciclos negativos. 
+
+Siendo que, como mencionamos antes, cada iteración reduce como mínimo en 1 el costo, se va a
 llamar a Bellman-Ford un máximo de $C_i(f) - C_f(f)$ veces. Ahora, el costo
 inicial depende del algoritmo por lo tanto es mejor establecer una cota superior
 al costo inicial. Llevándolo a un extremo,  sea $C_{max}$  la capacidad más alta
 de una arista, a $K_{max}$ como el costo más alto de una arista, entonces, el
 costo inicial tiene una cota superior tal que $C_i (f) \leq K_{max}\ C_{max}\ E$.
 Pensando que $C_f$ tiene que ser positivo, podríamos maximizar a la resta como
-$C_i(f) - C_f (f) \leq K_{max}\ C_{max}\ E$. Por lo tanto, el algoritmo de
-Bellman-Ford va a ser llamado un máximo de $K_{max}\ C_{max}\ E$ veces. Entonces,
+$C_i(f) - C_f (f) \leq K_{max}\ C_{max}\ E$. 
+
+Por lo tanto, el algoritmo de Bellman-Ford va a ser llamado un máximo de $K_{max}\ C_{max}\ E$ veces. Entonces,
 la complejidad temporal del algoritmo resulta $O(V\ E^2\ K_{max}\ C_{max})$.
 
 ** Detalles de implementación
