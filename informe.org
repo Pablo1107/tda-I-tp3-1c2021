@@ -1,7 +1,5 @@
 #+LANGUAGE: es
 #+OPTIONS: toc:nil title:nil
-#+BIBLIOGRAPHY: fuentes.bib
-#+CITE_EXPORT: biblatex
 #+LATEX_HEADER: \bibliographystyle{plain}
 
 #+LATEX_CLASS_OPTIONS: [titlepage,a4paper]
@@ -207,6 +205,188 @@ Se pide:
  4. Un tercer problema al que llamaremos X se puede reducir polinomialmente a EXACT-COVER, qué podemos decir acerca de su complejidad?
 
  5. Realice un análisis entre las clases de complejidad P, NP y NP-C y la relación entre ellos.
+
+** Definición de $EXACT-COVER$
+
+Dado un conjunto de elementos \( U={u_1, u_2, \dots, u_n} \), y un conjunto \( S
+= {S_1, S_2, \dots, S_m}, S_j \subseteq U \); hallar un conjunto \( T \subseteq
+S \) tal que \( \bigcap_{i=1}^{|T|} T_i = U \), y que \( T_i \cap T_j =
+\varnothing, \forall T_i,T_j \in T \) (los elementos son disjuntos entre si).
+Decimos entonces, que $T$ es una cobertura exacta, o partición, de $U$. [cite:@KARP]
+
+** Demostración $CASTING \in NP-C$
+
+Buscamos demostrar que $CASTING$ pertenece a la clase NP-C. Para ello, requerimos demostrar que:
+
+1. \( CASTING \in NP \)
+2. \( CASTING \in NP-H \)
+
+*** \( CASTING \in NP \)
+
+Para demostrar (i), requerimos hallar un algoritmo certificador que verifique una solución del problema en tiempo polinomial. Sugerimos el siguiente:
+
+#+attr_latex: :options escapeinside='',mathescape=true
+#+begin_src text
+# P: conjunto de participantes propuestos, con las caract. que cumplen (pi.caract)
+# K: conjunto de características deseadas
+CERT-CASTING(P, K)
+    # (1) máximo un participante por característica, pero un participante puede tener varias
+    Verificar '$|P| \leq |K|$'
+
+    # (2) no hay características repetidas entre participantes
+    Verificar que '$p_i.caract \cap p_j.caract = \varnothing, \forall p_i, p_j \in P, i \neq j$'
+
+    # (3) se está cumpliendo con todas las características deseadas
+    Siendo '$C = \bigcap_{i=1}^{|P|} p_i.caract$' el conjunto de todas las
+    características presentes en el conjunto '$P$', verificar que:
+        # (a)
+        '$c_i \in K, \forall c_i \in C$'
+        # (b)
+        '$|C| = |K|$'
+#+end_src
+
+Análisis de complejidad:
+1. Se realiza en tiempo constante ($O(1)$)
+2. Involucra una comparación de todos contra todos ($O(|P|^2)$); la comparación involucra la intersección de dos listas, que en el peor de los casos pueden contener todas las características, pero si se hace uso de un hashmap puede realizarse en tiempo lineal, al ser la iteración de dos listas ($O(|K|)$). En consecuencia, resulta $O(|P|^2 |K|)$.
+3. Para construir el conjunto de características cubiertas se iteran todas las personas seleccionadas y se unen las listas de características ($O(|P||K|)$). A continuación se verifica que el conjunto de características cubiertas tenga el mismo tamaño que el de características deseadas ($O(1)$). Por ende, resulta $O(|P| |K|)$.
+
+Por el análisis realizado, el algoritmo certificador tiene complejidad \( O(1+|P|^2 |K|+|P| |K|) = O(|P|^2|K|) \), que resulta ser polinomial, por lo que \( CASTING \in NP \).
+
+*** \( CASTING \in NP-H \)
+
+Para demostrarlo, con reducir un problema $X \in NP-C$ a $CASTING$, podemos demostrar que pertenece a $NP-H$, dado que al ser $X \in NP-C$, vale que $X \in NP-H$, por lo que podemos reducir cualquier problema $Y \in NP$ a X y, si $X$ se puede reducir a $CASTING$, por transitividad $Y$ también es reducible al mismo.
+
+Asumiendo que $EXACT-COVER \in NP-C$, si se logra encontrar una reducción tal que $EXACT-COVER \leq_P CASTING$, podemos afirmar que $CASTING \in NP-C$, y que por lo tanto $CASTING \in NP-H$.
+
+Sugerimos el siguiente algoritmo:
+
+#+attr_latex: :options escapeinside='',mathescape=true
+#+begin_src text
+EXACT-COVER-TO-CASTING
+    # (1) las características se corresponden con los elementos del conjunto a cubrir
+    # (no hay dos personas que vayan a cumplir una característica)
+    '$ K = U $'
+
+    # (2) las personas se corresponden con cada conjunto a elegir
+    '$ P=\{\} $'
+    para cada '$ S_j \in S $':
+        '$ P = P \cup \{ id: j, caract: S_j \} $'
+#+end_src
+
+Análisis de complejidad:
+1. Tiempo constante, dado que es el mismo conjunto ($O(1)$)
+2. Para generar el conjunto de “candidatos”, iteramos los conjuntos a elegir para la cobertura, y representamos a cada uno como una “persona” que participa del casting, y que cumple determinadas características, que son finalmente los elementos del conjunto para el que se busca hallar la partición. Esto se realiza en tiempo lineal. ($O(|S|)$)
+
+Resulta entonces que el algoritmo de reducción es polinomial, por lo que hallamos una reducción polinomial tal que $EXACT-COVER \leq_P CASTING$, por lo que, asumiendo que $EXACT-COVER \in NP-C$, podemos asegurar que $CASTING \in NP-H$.
+
+Quedan demostradas las dos condiciones para que $CASTING \in NP-C$.
+
+** Demostración $EXACT-COVER \in NP-C$
+
+Las condiciones a demostrar son las mismas que en la sección anterior.
+
+*** \( EXACT-COVER \in NP \)
+
+Se propone el algoritmo:
+
+#+attr_latex: :options escapeinside='',mathescape=true
+#+begin_src text
+# X: conjunto del que se busca verificar la partición
+# S: colección de conjuntos que potencialmente forman una partición de X
+
+CERT-EXACT-COVER(X, S)
+    # (1) máxima cantidad de conjuntos
+    Verificar '$ |S| \leq |X| $'
+    # (2) todo conjunto en S está incluido en X
+    Verificar que '$ Si \subseteq X, \forall S_i \in S $'
+    # (3) los conjuntos en S son disjuntos
+    Verificar que '$ S_i \cap S_j = \varnothing, \forall S_i, S_j \in S, con i \neq j $'
+    # (4) la unión de los conjuntos en S forman a X
+    Verificar que '$ \bigcup_{i=1}^{|S|} S_i = X $'
+#+end_src
+
+Análisis de complejidad:
+1. Se puede realizar en tiempo constante ($O(1)$)
+2. Se puede verificar que un conjunto \( S_i \subseteq X \) tomando cada elemento del conjunto \( S_i \) y verificando que este se encuentra en $X$. Si nuestro algoritmo utiliza un set o hashmap para guardar al conjunto $X$ entonces esta operación se puede realizar en \( O(|S_i|) \). Luego dicha operación será necesaria realizarla para todos los conjuntos $S_i$, consecuentemente este paso tomará \( O(|S| |max \; S_i|) \).
+3. Se puede verificar realizando la misma validación que en el paso (2) que toma \( O(|S_i|) \) pero entre cada uno de los conjuntos que son parte de $S$ entre sí. Es decir, que es necesario realizar dicha operación \( O(|S|^2) \) veces, lo cual termina teniendo una complejidad $O(|max \; S_i| |S|^2)$.
+4. Se puede verificar tomando cada elemento de $X$ y validando que este pertenezca a alguno de los conjuntos $S_i$. Nuevamente, si nuestro algoritmo utiliza un set o hashmap para guardar a los conjuntos $S_i$ entonces esta operación se puede realizar en \( O(|X| |S|) \).
+
+Finalmente nuestro algoritmo verificador toma \( O(1 + |S| |max \; S_i| + |max \; S_i| |S|^2 + |X| |S|) = O(|max \; S_i| |S|^2 + |X| |S|) \), es decir, un tiempo polinomial en función de los parámetros de entrada.
+
+*** \( EXACT-COVER \in NP-H \)
+
+Para demostrar que \( EXACT-COVER \in NP-H \) realizaremos una reducción
+polinomial del problema \( 3SAT \) a este. Para ello partiremos del problema \(
+3SAT \) en el cual tenemos varias cláusulas con máximo 3 literales cada uno, por
+ejemplo \( (x_1 \lor x_2 \lor x_3) \land (x_4 \lor x_5 \lor x_6) \). A partir de
+esta expresión booleana construiremos el conjunto
+
+$$
+X = \{ x_1, x_2, …, x_{|X|}, C_1, C_2, …, C_{|C|}, n_{11}, n_{12}, n_{13}, n_{21}, n_{22}, n_{23}, ..., n_{c1}, n_{c2}, n_{c3} \} \).
+$$
+
+Los valores $x_i$ representan a las variables
+$x_i$ en el problema $3SAT$, $C_j$ representa a las cláusula $j$ de dicho
+problema y $n_{km}$ representa un “nexo” entre la variable $x_i$ que se
+encuentra en el número $m$ de la claúsula $k$ con dicha cláusula.
+
+Luego podemos construir el conjunto S que contiene los posibles subconjuntos de
+$X$ con los que se busca armar la partición de $X$. Para ello incluiremos en $S$
+a los nexos creados previamente \( (\{n_{11}\}, \{n_{12}\}, \{n_{13}\},
+\{n_{21}\}, \{n_{22}\}, \{n_{23}\},..., \{n_{c1}\}, \{n_{c2}\}, \{n_{c3}\}) \) y
+a estos nexos con sus cláusulas \( (\{C_1, n_{11} \}, \{C_1, n_{12} \}, \{C_1,
+n_{13} \}, \{C_2, n_{21} \}, \{C_2, n_{22} \}, \{C_2, n_{23} \}, …, \{C_{|C|},
+n_{|C|1} \}, \{C_{|C|}, n_{|C|2} \}, \{C_{|C|}, n_{|C|3} \}) \). Finalmente
+también deberemos agregar a $S$ dos conjuntos por cada variable $x_i$ del
+problema $3SAT$ que representarán la posibilidad de que $x_i$ tome un valor
+verdadero o falso. En el caso del valor verdadero de $x_i$ el conjunto que
+llamaremos $V_i$ incluirá a $x_i$ y a los $n_{km}$ en los que $x_i$ tiene un
+literal negado. En el caso del valor falso de $x_i$ el conjunto que llamaremos
+$F_i$ incluirá a $x_i$ y a los $n_{km}$ en los que $x_i$ tiene un literal no
+negado.
+
+Finalmente se resuelve el problema $EXACT-COVER$ con los $X$ y $S$ previamente
+construidos y se transforma el resultado para obtener el de $3SAT$. Para ello se
+buscan cuáles conjuntos $V_i$ o $F_i$ se utilizaron para realizar la partición.
+Si se utilizó el conjunto $V_i$ quiere decir que la variable $x_i$ toma un valor
+verdadero y si se utilizó el conjunto $F_i$ quiere decir que la variable $x_i$
+toma un valor falso.
+
+Para ejemplificar este procedimiento veamos un ejemplo. Si el problema $3SAT$ a
+resolver es \( (x_1 \lor x_2) \land (~x_1 \lor x_4 \lor ~x_3) \) entonces en la
+primera transformación construimos los conjuntos:
+ - $X = \{ x_1, x_2, x_3, x_4, C_1, C_2, n_{11}, n_{12}, n_{21}, n_{22}, n_{23} \}$
+ - $V_1 = \{x_1, n_{21}\}, V_2 = \{ x_2 \}, V_3 = \{ x_3, n_{23} \}, V_4 = \{x_4 \}$
+ - $F_1 = \{ x_1, n_{11} \}, F_2 = \{ x_2, n_{12} \}, F_3 = \{ x_3 \}, F_4 = \{x_4, n_{22} \}$
+ - $S = \{\{n_{11}\}, \{n_{12}\}, \{n_{21}\}, \{n_{22}\}, \{n_{23}\}, V_1, V_2,
+   V_3, V_4, F_1, F_2, F_3, F_4,\newline \{ C1, n_{11} \}, \{ C1, n_{12} \}, \{ C2, n_{21} \}, \{ C2, n_{22} \}, \{ C2, n_{23} \} \}$
+
+Luego de esto una posible solución al problema $EXACT-COVER$ puede ser la partición \( P = \{ \{n_{12}\}, \{n_{21}\}, V_1 = \{ x_1, n_{21} \}, V_2 = \{ x_2 \}, V_3 = \{ x_3, n_{23} \}, V_4 = \{ x_4 \}, \{ C1, n_{11} \}, \{ C2, n_{22} \} \} \) y la transformación para la solución es:
+ * \( V_1 \rightarrow x_1 \) verdadero
+ * \( V_2 \rightarrow x_2 \) verdadero
+ * \( V_3 \rightarrow x_3 \) verdadero
+ * \( V_4 \rightarrow x_4 \) verdadero
+
+Análisis de complejidad:
+1. La construcción del conjunto $X$ toma $O(|X|)$ para agregar a los elementos $x_i$, $O(|C|)$ para agregar a los elementos $C_j$ que representan a las claúsulas y $O(|X| |C|)$ para agregar a los elementos que representan sus nexos $n_{km}$, siendo $|X|$ la cantidad de variables y $|C|$ la cantidad de cláusulas en el problema $3SAT$.
+2. Por otro lado la construcción del conjunto $S$ toma $O(|X| |C|)$ para agregar a los elementos que representan los nexos $n_{km}$, $O(|X| |C|)$ para agregar a los elementos $V_i$ y $F_i$ y $O(|C|)$ para agregar a los elementos $C_j$.
+3. Finalmente la transformación del resultado de $EXACT-COVER$ en el resultado de $3SAT$ se puede realizar en un tiempo lineal recorriendo la solución de $EXACT-COVER$. Consecuentemente podemos justificar que las transformaciones son polinomiales y que por lo tanto la reducción es polinomial demostrando que $EXACT-COVER \in NP-H$ y por ello $EXACT-COVER \in NP-C$.
+
+** Utilizando el concepto de transitividad y la definición de NP-C explique qué ocurriría si se demuestra que el problema EXACT-COVER pertenece a la clase P
+
+Si $EXACT-COVER \in P$, quiere decir que existe un algoritmo que resuelve el problema en tiempo polinomial. Como se demostró, $EXACT-COVER \in NP-C$, que equivale a decir que $EXACT-COVER \in NP,NP-H$, por lo que, para cualquier problema $X \in NP$, podemos hallar una reducción polinomial para llevarlo a $EXACT-COVER$, de manera que \( X \leq_P EXACT-COVER \). Dado que, bajo la hipótesis dada, $EXACT-COVER$ se puede resolver en tiempo polinomial, y $X$ puede reducirse a $EXACT-COVER$ en tiempo también polinomial; resolver $X$ también se vuelve polinomial, utilizando primero la reducción a $EXACT-COVER$, obtener su resolución, y luego transformar a la solución de $X$, todas operaciones polinomiales. Como se encontró un algoritmo que resuelve $X$ en tiempo polinomial, se puede afirmar que $X \in P, \forall X \in NP$. Luego, $P=NP$.
+
+** Un tercer problema al que llamaremos X se puede reducir polinomialmente a EXACT-COVER, qué podemos decir acerca de su complejidad?
+
+Si \( X \leq_P EXACT-COVER \), se puede afirmar que la complejidad de $EXACT-COVER$ es igual o mayor a la de $X$, y que si podemos resolver cualquier instancia de $EXACT-COVER$, también podemos resolver cualquiera de $X$.
+
+** Realice un análisis entre las clases de complejidad P, NP y NP-C y la relación entre ellos.
+
+Los problemas de tipo $NP-C$ se encuentran incluídos en las clases $NP$ y $NP-H$, lo cual quiere decir que se puede construir un verificador polinomial de posibles soluciones a dichos problemas (son $NP$) y que son al menos tan difíciles de resolver como cualquier otro problema en $NP$ (son $NP-H$).
+
+Una característica interesante de los problemas $NP-C$ es que se pueden reducir polinomialmente entre sí, con lo cual si se resuelve uno de ellos en tiempo polinomial entonces también resulta posible hacerlo para los demás.
+
+A su vez, una de las preguntas más importantes a resolver es si $NP = P$. Si se demuestra que un problema en $NP-C$ se puede resolver en tiempo polinomial entonces se demuestra que cualquier problema en $NP-C$ se puede resolver con la misma complejidad y por lo tanto que todos los problemas en $NP$ se pueden resolver polinomialmente y que $NP = P$. Por otro lado si se demuestra que un problema en $NP$ no se puede resolver en tiempo polinomial entonces se demuestra que $NP != P$, pero lo complicado de esto último es que es difícil demostrar que no existe un algoritmo que resuelva un problema en tiempo polinomial, sino que tal vez no lo hemos encontrado hasta el momento.
 
 * Fuentes
 \printbibliography[heading=none]
