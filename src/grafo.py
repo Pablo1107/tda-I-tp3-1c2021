@@ -155,7 +155,7 @@ def camino_fuente_sumidero(grafo):
     camino.reverse()
     return camino
 
-def Ford_Fulkerson(grafo):
+def Edmonds_Karp(grafo):
     flujo_maximo = 0
     grafo_residual = Grafo(grafo.fuente, grafo.sumidero)
 

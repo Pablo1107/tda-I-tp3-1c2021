@@ -242,7 +242,7 @@ mas corto se va a saturar como minimo una arista. Entonces, el proximo camino mi
 va a ser de igual longitud o mas largo, con una longitud maxima posible de $V$. De esta
 forma, en lugar de hacer $C$ iteraciones vamos a terminar haciendo $V E$ interaciones.
 
-A este algoritmo se lo conoce como Edmonds-Kalp y tiene una complejidad de $O(V E^2)$
+A este algoritmo se lo conoce como Edmonds-Karp y tiene una complejidad de $O(V E^2)$
 
 **** Optimalidad
 Como se mencionó en la explicación del método, si hay un camino de aumento, podemos
@@ -265,7 +265,7 @@ $$
 
 El hecho de que tengamos un costo en las aristas va a impactar en el grafo residual de 
 la forma que el par del grafo residual de una arista en la red de flujo va a tener el 
-mismo costo pero negativo[cite:@Kelin] . Es decir, notando a una arista e como los vértices u,v que 
+mismo costo pero negativo[cite:@Klein] . Es decir, notando a una arista e como los vértices u,v que
 conecta, en orden de la dirección, esto lo representamos como:
 
 $$
