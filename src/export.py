@@ -6,7 +6,7 @@ import parte_1
 def main(nombre_archivo):
     grafo, grafo_residual = parte_1.main(nombre_archivo)
 
-    dot = graphviz.Digraph(comment='Grafo', format='svg', graph_attr={'rankdir': 'LR' })
+    dot = graphviz.Digraph(comment='Grafo', format='png', graph_attr={'rankdir': 'LR' })
 
     dot.node(grafo.fuente, color='green', rank='source')
     dot.node(grafo.sumidero, color='green', rank='sink')

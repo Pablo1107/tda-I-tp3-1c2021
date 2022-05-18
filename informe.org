@@ -407,7 +407,7 @@ Aparte de esto, esta incluido un exportador que genera un imagen en formato
 #+ATTR_LATEX: :placement [H]
 #+ATTR_LATEX: :width 0.8\textwidth
 #+ATTR_LATEX: :caption \caption{\label{fig1:seq01}Hospital con un entrenador cargado.}
-[[file:assets/grafo-qatar.svg]]
+[[file:assets/grafo-qatar.png]]
 
 * Parte 2: Un reality único
 
