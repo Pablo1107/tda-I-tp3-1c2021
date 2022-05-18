@@ -200,6 +200,7 @@ que la arista es una arista que vuelve en el grafo residual y debemos restarle e
 de botella.[cite:@CLRS]
 
 **** Pseudocódigo
+
 #+begin_src text
 Ford_fulkerson(G,s,t)
     por cada arista (u,v) en G
@@ -216,13 +217,14 @@ Ford_fulkerson(G,s,t)
 #+end_src
 
 **** Complejidad
+
 En primer lugar, se asigna un flujo 0 a cada arista. Esta operación cuesta $O(E)$. Luego,
 tenemos un ciclo que itera mientras haya un camino de aumento. Analizar este ciclo es un
 tanto más complejo.
 
 Primero, como todas las capacidades son enteras positivas, todas las capacidades residuales 
 del grafo $G_f$ van a ser enteras positivas. Luego, sea $G$ una red de flujo con un flujo 
-$f$ y sea $P% un camino de aumento. Entonces, por lo mencionado en la explicación del 
+$f$ y sea $P$ un camino de aumento. Entonces, por lo mencionado en la explicación del
 algoritmo, el flujo nuevo es el actual más el cuello de botella, que es positivo y entero.
 Esto implica que el flujo nuevo es siempre mayor al anterior por al menos una unidad. Por
 otro lado, para buscar una cota máxima de flujo, suponemos que todas las aristas salientes
@@ -245,6 +247,7 @@ forma, en lugar de hacer $C$ iteraciones vamos a terminar haciendo $V E$ interac
 A este algoritmo se lo conoce como Edmonds-Karp y tiene una complejidad de $O(V E^2)$
 
 **** Optimalidad
+
 Como se mencionó en la explicación del método, si hay un camino de aumento, podemos
 aumentar el flujo donde el flujo nuevo va a ser mayor al flujo anterior. Entonces,
 cuando no haya más caminos de aumento, el flujo va a ser máximo. Por lo presentado en
@@ -321,6 +324,7 @@ reduciendo el costo de a por lo menos 1 hasta llegar al costo final $C_f(f)$.
 Entonces, el algoritmo eventualmente va a finalizar en $C_f(f) - C_i(f)$ iteraciones  y obtendremos la solución óptima. 
 
 *** Pseudocodigo
+
 #+begin_src text
 Cycle-canceling():
     Sea f el flujo maximo
